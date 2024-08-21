@@ -38,9 +38,9 @@ func main() {
 	for _, token := range fileContents {
 		switch token {
 		case LEFT_PAREN:
-			fmt.Println("LEFT_PAREN ( NULL")
+			fmt.Println("LEFT_PAREN ( null")
 		case RIGHT_PAREN:
-			fmt.Println("RIGHT_PAREN ) NULL")
+			fmt.Println("RIGHT_PAREN ) null")
 		}
 	}
 	fmt.Println("EOF null")
