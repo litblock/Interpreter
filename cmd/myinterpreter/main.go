@@ -50,9 +50,13 @@ func main() {
 	hasError := false
 	lineNum := 1
 	skip := false
+	comment := false
 	for i, token := range fileContents {
-		if skip {
+		if skip || comment {
 			skip = false
+			if token == '\n' {
+				comment = false
+			}
 		} else {
 			switch token {
 			case LEFT_PAREN:
@@ -76,7 +80,16 @@ func main() {
 			case STAR:
 				fmt.Println("STAR * null")
 			case SLASH:
-				fmt.Println("SLASH / null")
+				if len(fileContents) > i+1 {
+					if fileContents[i+1] == '/' {
+						skip = true
+						comment = true
+					} else {
+						fmt.Println("SLASH / null")
+					}
+				} else {
+					fmt.Println("SLASH / null")
+				}
 			case EQUAL:
 				if len(fileContents) > i+1 {
 					if fileContents[i+1] == '=' {
