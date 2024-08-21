@@ -17,6 +17,7 @@ const (
 	SEMICOLON   rune = ';'
 	STAR        rune = '*'
 	SLASH       rune = '/'
+	EQUAL       rune = '='
 )
 
 func main() {
@@ -45,36 +46,51 @@ func main() {
 	fileContents := string(raw)
 	hasError := false
 	lineNum := 1
-	for _, token := range fileContents {
-		switch token {
-		case LEFT_PAREN:
-			fmt.Println("LEFT_PAREN ( null")
-		case RIGHT_PAREN:
-			fmt.Println("RIGHT_PAREN ) null")
-		case LEFT_BRACE:
-			fmt.Println("LEFT_BRACE { null")
-		case RIGHT_BRACE:
-			fmt.Println("RIGHT_BRACE } null")
-		case COMMA:
-			fmt.Println("COMMA , null")
-		case DOT:
-			fmt.Println("DOT . null")
-		case MINUS:
-			fmt.Println("MINUS - null")
-		case PLUS:
-			fmt.Println("PLUS + null")
-		case SEMICOLON:
-			fmt.Println("SEMICOLON ; null")
-		case STAR:
-			fmt.Println("STAR * null")
-		case SLASH:
-			fmt.Println("SLASH / null")
-		case '\n':
-			lineNum++
-		default:
-
-			hasError = true
-			fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
+	skip := false
+	for i, token := range fileContents {
+		if skip {
+			skip = false
+		} else {
+			switch token {
+			case LEFT_PAREN:
+				fmt.Println("LEFT_PAREN ( null")
+			case RIGHT_PAREN:
+				fmt.Println("RIGHT_PAREN ) null")
+			case LEFT_BRACE:
+				fmt.Println("LEFT_BRACE { null")
+			case RIGHT_BRACE:
+				fmt.Println("RIGHT_BRACE } null")
+			case COMMA:
+				fmt.Println("COMMA , null")
+			case DOT:
+				fmt.Println("DOT . null")
+			case MINUS:
+				fmt.Println("MINUS - null")
+			case PLUS:
+				fmt.Println("PLUS + null")
+			case SEMICOLON:
+				fmt.Println("SEMICOLON ; null")
+			case STAR:
+				fmt.Println("STAR * null")
+			case SLASH:
+				fmt.Println("SLASH / null")
+			case EQUAL:
+				if len(fileContents) > i+1 {
+					if fileContents[i+1] == '=' {
+						fmt.Println("EQUAL_EQUAL == null")
+						skip = true
+					} else {
+						fmt.Println("EQUAL = null")
+					}
+				} else {
+					fmt.Println("EQUAL = null")
+				}
+			case '\n':
+				lineNum++
+			default:
+				hasError = true
+				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
+			}
 		}
 	}
 	//eof = end of file
