@@ -19,6 +19,8 @@ const (
 	SLASH       rune = '/'
 	EQUAL       rune = '='
 	BANG        rune = '!'
+	LESS        rune = '<'
+	GREATER     rune = '>'
 )
 
 func main() {
@@ -96,6 +98,28 @@ func main() {
 					}
 				} else {
 					fmt.Println("BANG ! null")
+				}
+			case LESS:
+				if len(fileContents) > i+1 {
+					if fileContents[i+1] == '=' {
+						fmt.Println("LESS_EQUAL <= null")
+						skip = true
+					} else {
+						fmt.Println("LESS < null")
+					}
+				} else {
+					fmt.Println("LESS < null")
+				}
+			case GREATER:
+				if len(fileContents) > i+1 {
+					if fileContents[i+1] == '=' {
+						fmt.Println("GREATER_EQUAL >= null")
+						skip = true
+					} else {
+						fmt.Println("GREATER > null")
+					}
+				} else {
+					fmt.Println("GREATER > null")
 				}
 			case '\n':
 				lineNum++
