@@ -18,6 +18,7 @@ const (
 	STAR        rune = '*'
 	SLASH       rune = '/'
 	EQUAL       rune = '='
+	BANG        rune = '!'
 )
 
 func main() {
@@ -84,6 +85,17 @@ func main() {
 					}
 				} else {
 					fmt.Println("EQUAL = null")
+				}
+			case BANG:
+				if len(fileContents) > i+1 {
+					if fileContents[i+1] == '=' {
+						fmt.Println("BANG_EQUAL != null")
+						skip = true
+					} else {
+						fmt.Println("BANG ! null")
+					}
+				} else {
+					fmt.Println("BANG ! null")
 				}
 			case '\n':
 				lineNum++
