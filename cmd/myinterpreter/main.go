@@ -43,7 +43,8 @@ func main() {
 	}
 
 	fileContents := string(raw)
-
+	hasError := false
+	lineNum := 1
 	for _, token := range fileContents {
 		switch token {
 		case LEFT_PAREN:
@@ -68,8 +69,17 @@ func main() {
 			fmt.Println("STAR * null")
 		case SLASH:
 			fmt.Println("SLASH / null")
+		case '\n':
+			lineNum++
+		default:
+
+			hasError = true
+			fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
 		}
 	}
 	//eof = end of file
 	fmt.Println("EOF  null")
+	if hasError {
+		os.Exit(65)
+	}
 }
