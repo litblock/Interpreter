@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 const (
@@ -21,6 +22,7 @@ const (
 	BANG        rune = '!'
 	LESS        rune = '<'
 	GREATER     rune = '>'
+	STRING      rune = '"'
 )
 
 func main() {
@@ -50,12 +52,16 @@ func main() {
 	hasError := false
 	lineNum := 1
 	skip := false
-	comment := false
+	skipLine := false
+	skipNumLines := 0
 	for i, token := range fileContents {
-		if skip || comment {
+		if skip || skipLine || skipNumLines > 0 {
 			skip = false
 			if token == '\n' {
-				comment = false
+				skipLine = false
+			}
+			if skipNumLines != 0 {
+				skipNumLines--
 			}
 		} else {
 			switch token {
@@ -83,7 +89,7 @@ func main() {
 				if len(fileContents) > i+1 {
 					if fileContents[i+1] == '/' {
 						skip = true
-						comment = true
+						skipLine = true
 						lineNum++
 					} else {
 						fmt.Println("SLASH / null")
@@ -135,8 +141,33 @@ func main() {
 				} else {
 					fmt.Println("GREATER > null")
 				}
-			case ' ', '\t':
+			case STRING:
+				if len(fileContents) < i+1 {
+					fmt.Println("[line 1] Error: Unterminated string")
+				} else {
+					it := i + 1
+					isString := false
+					for it < len(fileContents) {
+						if fileContents[it] == '"' {
+							var out strings.Builder
+							isString = true
+							for j := i + 1; j < it; j++ {
+								out.WriteString(string(fileContents[j]))
+							}
+							fmt.Printf("STRING \"%s\" %s\n", out.String(), out.String())
+							skipNumLines = it - i
+							break
+						}
+						it++
+					}
+					if !isString {
+						hasError = true
+						fmt.Fprintf(os.Stderr, "[line %d] Error: Unterminated string.\n", lineNum)
+					}
 
+				}
+			case ' ', '\t':
+				//skip
 			case '\n':
 				lineNum++
 			default:
