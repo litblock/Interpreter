@@ -170,8 +170,31 @@ func main() {
 			case '\n':
 				lineNum++
 			default:
-				hasError = true
-				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
+				if isDigit(token) {
+					var out strings.Builder
+					it := i
+					for it = i; it < len(fileContents); it++ {
+						if isDigit(rune(fileContents[it])) {
+							out.WriteString(string(fileContents[it]))
+						} else if fileContents[it] == '.' || isDigit(rune(fileContents[it+1])) {
+							out.WriteString(string(fileContents[it]))
+							for it += 1; it < len(fileContents); it++ {
+								if isDigit(rune(fileContents[it])) {
+									out.WriteString(string(fileContents))
+								} else {
+									break
+								}
+							}
+						} else {
+							break
+						}
+					}
+					i += it - i
+					fmt.Printf("NUMBER %s %s\n", out.String(), out.String())
+				} else {
+					hasError = true
+					fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
+				}
 			}
 		}
 	}
@@ -180,4 +203,8 @@ func main() {
 	if hasError {
 		os.Exit(65)
 	}
+}
+
+func isDigit(char rune) bool {
+	return char >= '0' && char <= '9'
 }
