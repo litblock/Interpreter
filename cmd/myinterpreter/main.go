@@ -134,6 +134,8 @@ func main() {
 				} else {
 					fmt.Println("GREATER > null")
 				}
+			case ' ', '\t':
+
 			case '\n':
 				lineNum++
 			default:
