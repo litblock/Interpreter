@@ -53,15 +53,13 @@ func main() {
 	lineNum := 1
 	skip := false
 	skipLine := false
-	skipNumLines := 0
-	for i, token := range fileContents {
-		if skip || skipLine || skipNumLines > 0 {
+	//might be easier to change to a for loop (easier to skip lines lol)
+	for i := 0; i < len(fileContents); i++ {
+		token := rune(fileContents[i])
+		if skip || skipLine {
 			skip = false
 			if token == '\n' {
 				skipLine = false
-			}
-			if skipNumLines != 0 {
-				skipNumLines--
 			}
 		} else {
 			switch token {
@@ -154,13 +152,14 @@ func main() {
 							for j := i + 1; j < it; j++ {
 								out.WriteString(string(fileContents[j]))
 							}
+							i += it - i
 							fmt.Printf("STRING \"%s\" %s\n", out.String(), out.String())
-							skipNumLines = it - i
 							break
 						}
 						it++
 					}
 					if !isString {
+						i += it - i
 						hasError = true
 						fmt.Fprintf(os.Stderr, "[line %d] Error: Unterminated string.\n", lineNum)
 					}
