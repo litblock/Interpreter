@@ -171,25 +171,31 @@ func main() {
 				lineNum++
 			default:
 				if isDigit(token) {
-					var out strings.Builder
-					it := i
-					for it = i; it < len(fileContents); it++ {
-						if isDigit(rune(fileContents[it])) {
-							out.WriteString(string(fileContents[it]))
-						} else if fileContents[it] == '.' || isDigit(rune(fileContents[it+1])) {
-							out.WriteString(string(fileContents[it]))
-							for it += 1; it < len(fileContents); it++ {
-								if isDigit(rune(fileContents[it])) {
-									out.WriteString(string(fileContents))
-								} else {
-									break
-								}
+					if i-1 >= 0 {
+						if fileContents[i-1] == '.' {
+							for i < len(fileContents) && isDigit(rune(fileContents[i])) {
+								i++
 							}
-						} else {
-							break
 						}
 					}
-					i += it - i
+					var out strings.Builder
+					for i < len(fileContents) && isDigit(rune(fileContents[i+1])) {
+						out.WriteString(string(fileContents[i]))
+						i++
+					}
+					if i+1 < len(fileContents) && fileContents[i+1] == '.' {
+						out.WriteString(string(fileContents[i]))
+						if i+2 < len(fileContents) && isDigit(rune(fileContents[i+2])) {
+							out.WriteString(string(fileContents[i+1]))
+							i += 2
+							for i < len(fileContents) && isDigit(rune(fileContents[i])) {
+								out.WriteString(string(fileContents[i]))
+								i++
+							}
+						}
+					} else if i+1 < len(fileContents) && fileContents[i+1] != '.' {
+						out.WriteString(string(fileContents[i]))
+					}
 					fmt.Printf("NUMBER %s %s\n", out.String(), out.String())
 				} else {
 					hasError = true
