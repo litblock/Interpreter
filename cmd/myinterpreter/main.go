@@ -84,6 +84,7 @@ func main() {
 					if fileContents[i+1] == '/' {
 						skip = true
 						comment = true
+						lineNum++
 					} else {
 						fmt.Println("SLASH / null")
 					}
