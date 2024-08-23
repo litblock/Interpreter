@@ -27,6 +27,7 @@ const (
 )
 
 func main() {
+	reserved := map[string]string{"and": "AND", "class": "CLASS", "else": "ELSE", "false": "FALSE", "for": "FOR", "fun": "FUN", "if": "IF", "nil": "NIL", "or": "OR", "return": "RETURN", "super": "SUPER", "this": "THIS", "true": "TRUE", "var": "VAR", "while": "WHILE", "print": "PRINT"}
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
 
@@ -221,7 +222,11 @@ func main() {
 						i++
 					}
 					out.WriteString(string(fileContents[i]))
-					fmt.Println("IDENTIFIER", out.String(), "null")
+					if reserved[out.String()] != "" {
+						fmt.Println(reserved[out.String()], out.String(), "null")
+					} else {
+						fmt.Println("IDENTIFIER", out.String(), "null")
+					}
 				} else {
 					hasError = true
 					fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
