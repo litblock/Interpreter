@@ -187,7 +187,7 @@ func main() {
 								i++
 							}
 						}
-					} else if i+1 < len(fileContents) && fileContents[i+1] != '.' {
+					} else if i < len(fileContents) && fileContents[i] != '.' {
 						out.WriteString(string(fileContents[i]))
 					}
 					foutput, err := strconv.ParseFloat(out.String(), 64)
