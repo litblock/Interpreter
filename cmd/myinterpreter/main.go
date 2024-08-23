@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -171,15 +172,8 @@ func main() {
 				lineNum++
 			default:
 				if isDigit(token) {
-					if i-1 >= 0 {
-						if fileContents[i-1] == '.' {
-							for i < len(fileContents) && isDigit(rune(fileContents[i])) {
-								i++
-							}
-						}
-					}
 					var out strings.Builder
-					for i < len(fileContents) && isDigit(rune(fileContents[i+1])) {
+					for i+1 < len(fileContents) && isDigit(rune(fileContents[i+1])) {
 						out.WriteString(string(fileContents[i]))
 						i++
 					}
@@ -196,7 +190,22 @@ func main() {
 					} else if i+1 < len(fileContents) && fileContents[i+1] != '.' {
 						out.WriteString(string(fileContents[i]))
 					}
-					fmt.Printf("NUMBER %s %s\n", out.String(), out.String())
+					foutput, err := strconv.ParseFloat(out.String(), 64)
+					if err != nil {
+						hasError = true
+						fmt.Fprintf(os.Stderr, "[line %d] Error: Invalid number: %s\n", lineNum, foutput)
+						continue
+					} else {
+						foutput := fmt.Sprintf("%.6f", foutput)
+						foutput = strings.TrimRight(foutput, "0")
+						if foutput[len(foutput)-1] == '.' {
+							foutput += "0"
+						}
+						fmt.Println("NUMBER", out.String(), foutput)
+					}
+					if i < len(fileContents) && fileContents[i] == '.' {
+						fmt.Println("DOT . null")
+					}
 				} else {
 					hasError = true
 					fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
