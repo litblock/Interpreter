@@ -147,7 +147,9 @@ func main() {
 					it := i + 1
 					isString := false
 					for it < len(fileContents) {
-						if fileContents[it] == '"' {
+						if fileContents[i] == '\n' {
+							lineNum++
+						} else if fileContents[it] == '"' {
 							var out strings.Builder
 							isString = true
 							for j := i + 1; j < it; j++ {
@@ -177,6 +179,9 @@ func main() {
 						out.WriteString(string(fileContents[i]))
 						i++
 					}
+					if fileContents[i] == '\n' {
+						lineNum++
+					}
 					if i+1 < len(fileContents) && fileContents[i+1] == '.' {
 						out.WriteString(string(fileContents[i]))
 						if i+2 < len(fileContents) && isDigit(rune(fileContents[i+2])) {
@@ -185,6 +190,9 @@ func main() {
 							for i < len(fileContents) && isDigit(rune(fileContents[i])) {
 								out.WriteString(string(fileContents[i]))
 								i++
+							}
+							if i < len(fileContents) && fileContents[i] == '\n' {
+								lineNum++
 							}
 						}
 					} else if i < len(fileContents) && fileContents[i] != '.' {
@@ -206,6 +214,14 @@ func main() {
 					if i < len(fileContents) && fileContents[i] == '.' {
 						fmt.Println("DOT . null")
 					}
+				} else if isAlpha(token) {
+					var out strings.Builder
+					for i+1 < len(fileContents) && isAlphaNumeric(rune(fileContents[i+1])) {
+						out.WriteString(string(fileContents[i]))
+						i++
+					}
+					out.WriteString(string(fileContents[i]))
+					fmt.Println("IDENTIFIER", out.String(), "null")
 				} else {
 					hasError = true
 					fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %s\n", lineNum, string(token))
@@ -222,4 +238,14 @@ func main() {
 
 func isDigit(char rune) bool {
 	return char >= '0' && char <= '9'
+}
+
+func isAlpha(char rune) bool {
+	return (char >= 'a' && char <= 'z') ||
+		(char >= 'A' && char <= 'Z') ||
+		char == '_'
+}
+
+func isAlphaNumeric(char rune) bool {
+	return isAlpha(char) || isDigit(char)
 }
